@@ -15,6 +15,19 @@ var massageData = {
             this.processItem(jsonData[i]);
         }
         console.log(this.authors);
+        this.authorIndex = this.sortAuthors();
+        console.log(this.authorIndex);
+    },
+
+    sortAuthors: function()
+    {
+        var authorIndex = [];
+        for (var author in this.authors)
+        {
+            authorIndex.push(author);
+        }
+        authorIndex.sort();
+        return authorIndex;
     },
 
     processItem: function(item)
@@ -23,7 +36,6 @@ var massageData = {
         {
             var authors = this.parseAuthors(item.Author);
             this.processItemByAuthors(item, authors);
-//          console.log(item.Title, authors);
         }
     },
 
@@ -42,14 +54,16 @@ var massageData = {
     {
         var authors = authorsEntry.split(/\&|\Wand\W/);
         for (var i = 0; i < authors.length; i++)
+        {
             authors[i] = this.parseAuthor(authors[i]);
+        }
         return authors;
     },
 
     parseAuthor: function(authorEntry)
     {
-        var lastName, firstName;
-        var names = authorEntry.split(/, /);
+        authorEntry = this.stripEditor(authorEntry);
+        var names = authorEntry.split(/,/), lastName, firstName;
         if (names.length > 1)
         {
             lastName = names[0]; firstName = names[1];
@@ -57,11 +71,19 @@ var massageData = {
         else
         {
             names = authorEntry.split(/ /);
-            firstName = names[0];
-            lastName = names[1];
+            firstName = names[0]; lastName = names[1];
         }
 
-        return [lastName, firstName];
+        return [jQuery.trim(lastName), jQuery.trim(firstName)];
+    },
+
+    stripEditor: function(authorEntry)
+    {
+        return jQuery.trim(authorEntry.replace(/\W\(?Editor\)?/, ""));
+    },
+
+    normalizeName: function(lastName, firstName)
+    {
     }
 };
 
