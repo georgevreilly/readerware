@@ -1,6 +1,5 @@
 //   "Title": "The Year of the Monkey",
 //   "Author": "Berry, Carole",
-//   "BookFormat": "Mass Market Paperback",
 //   "ISBN": "0-440-20672-3",
 //   "CopyDate": "1988"
 
@@ -14,9 +13,8 @@ var massageData = {
         {
             this.processItem(jsonData[i]);
         }
-        console.log(this.authors);
         this.authorIndex = this.sortAuthors();
-        console.log(this.authorIndex);
+        this.insertAuthors($('#authors'));
     },
 
     sortAuthors: function()
@@ -30,12 +28,22 @@ var massageData = {
         return authorIndex;
     },
 
+    insertAuthors: function(elem)
+    {
+        var me = this;
+        $.each(me.authorIndex, function(i, author) {
+            console.log(i+1, author);
+            $.each(me.authors[author], function(j, work) {
+                console.log("\t", j+1, work.Title);
+            });
+        });
+    },
+
     processItem: function(item)
     {
         if (item.Author)
         {
-            var authors = this.parseAuthors(item.Author);
-            this.processItemByAuthors(item, authors);
+            this.processItemByAuthors(item, this.parseAuthors(item.Author));
         }
     },
 
@@ -45,7 +53,7 @@ var massageData = {
         {
             var author = authors[i];
             var works = this.authors[author] || [];
-            works.push(item.Title);
+            works.push(item);
             this.authors[author] = works;
         }
     },
@@ -84,6 +92,7 @@ var massageData = {
 
     normalizeName: function(lastName, firstName)
     {
+        // TODO: handle initials, case, etc
     }
 };
 
